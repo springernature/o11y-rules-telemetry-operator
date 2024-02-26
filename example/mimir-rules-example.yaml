@@ -1,0 +1,24 @@
+apiVersion: mimirrules.telemetry.springernature.com/v1beta1
+kind: MimirRules
+metadata:
+  labels:
+    app.kubernetes.io/name: this-is-me
+  annotations:
+    "change.telemetry.springernature.com/o11y-tenant": "jose"
+  name: mimirrules-sample
+spec:
+  groups:
+  - name: es_alerts
+    rules:
+    - alert: ElasticsearchClusterStateRed
+      annotations:
+        description: Elasticsearch cluster state is red
+        summary: Elasticsearch cluster is inconsistent
+      expr: elasticsearch_cluster_health_status{color="red", namespace="o11y-dev-logging-es"} > 0
+      for: 5m
+  - name: MyGroupName
+    rules:
+    - alert: MyAlertName
+      expr: up == 0
+      labels:
+        severity: warning

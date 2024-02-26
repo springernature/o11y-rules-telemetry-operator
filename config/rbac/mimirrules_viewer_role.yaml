@@ -1,0 +1,27 @@
+# permissions for end users to view mimirrules.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: mimirrules-viewer-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: o11y-rules-telemetry-operator
+    app.kubernetes.io/part-of: o11y-rules-telemetry-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: mimirrules-viewer-role
+rules:
+- apiGroups:
+  - mimirrules.telemetry.springernature.com
+  resources:
+  - mimirrules
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - mimirrules.telemetry.springernature.com
+  resources:
+  - mimirrules/status
+  verbs:
+  - get

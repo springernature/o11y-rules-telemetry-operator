@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: controller-manager
+  namespace: system
+spec:
+  template:
+    spec:
+      containers:
+      - name: manager
+        env:
+        - name: CONTROLLER_MIMIR_API
+          value: "http://mimir-gateway.o11y-dev-metrics-mimir.svc.cluster.local/prometheus"
+        - name: CONTROLLER_CR_MIMIR_TENANT_ANNOTATION
+          value: "telemetry.springernature.com/o11y-tenant"
+        - name: CONTROLLER_CR_SELECTOR
+          value: ""
