@@ -1,6 +1,9 @@
 # o11y-rules-telemetry-operator
 
 K8S controller to manage Mimir Alerting and Recording rules with dynamic tenants, based on namespace name or annotations.
+Visit https://springernature.github.io/o11y-rules-telemetry-operator to see how to install with Helm.
+
+This repository uses GitHub pages with [chart-releaser](https://github.com/helm/chart-releaser) in a workflow with [chart-releaser-action](https://github.com/helm/chart-releaser-action) to automatically create an manage a Helm repository.
 
 ## Description
 

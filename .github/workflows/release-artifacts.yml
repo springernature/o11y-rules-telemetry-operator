@@ -14,15 +14,51 @@ env:
 permissions: {}
 
 jobs:
-  release:
+  build-image:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Get metadata for Docker image
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+          images: |
+              ghcr.io/${{ github.repository }}/${{ env.DOCKER_IMAGE_NAME }}
+          tags: |
+              type=raw,value=latest,enable={{is_default_branch}}
+              type=ref,event=tag
+              type=ref,event=branch
+              type=sha
+
+    - name: Log in to the GitHub Container registry
+      uses: docker/login-action@v3
+      with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build and if not a PR push to Github Packages
+      uses: docker/build-push-action@v5
+      with:
+          context: ${{ env.DOCKER_BUILD_DIR }}
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  release-chart:
     permissions:
       contents: write # to push chart release and create a release (helm/chart-releaser-action)
       packages: write # needed for ghcr access
-
+    needs:
+      - build-image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -30,33 +66,6 @@ jobs:
         run: |
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-
-      - name: Get metadata for Docker image
-        id: meta
-        uses: docker/metadata-action@v3
-        with:
-            images: |
-                ghcr.io/${{ github.repository }}/${{ env.DOCKER_IMAGE_NAME }}
-            tags: |
-                type=raw,value=latest,enable={{is_default_branch}}
-                type=ref,event=tag
-                type=ref,event=branch
-                type=sha
-
-      - name: Log in to the GitHub Container registry
-        uses: docker/login-action@v2
-        with:
-            registry: ghcr.io
-            username: ${{ github.actor }}
-            password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and if not a PR push to Github Packages
-        uses: docker/build-push-action@v3
-        with:
-            context: ${{ env.DOCKER_BUILD_DIR }}
-            push: ${{ github.event_name != 'pull_request' }}
-            tags: ${{ steps.meta.outputs.tags }}
-            labels: ${{ steps.meta.outputs.labels }}
 
       - name: Set up Helm
         uses: azure/setup-helm@v4
@@ -75,5 +84,5 @@ jobs:
     #       shopt -s nullglob
     #       for pkg in .cr-release-packages/*; do
     #         [ -z "${pkg:-}" ] && break
-    #         helm push "${pkg}" "oci://ghcr.io/${GITHUB_REPOSITORY_OWNER}/charts" && echo '::warning:: helm push failed!'
+    #         helm push "${pkg}" "oci://ghcr.io/${GITHUB_REPOSITORY_OWNER}/charts" &&  echo "::warning:: helm push failed!" >> $GITHUB_OUTPUT
     #       done
