@@ -1,0 +1,6 @@
+{
+    "Intentionally public": "Kubernetes controller to manage Mimir multi-tenant recording/alerting rules",
+    "Roles": {
+        "Technical Contact": "Jose Riguera"
+    }
+}
