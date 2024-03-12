@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "chart.fullname" . }}
+  labels:
+    control-plane: controller-manager
+    {{- include "chart.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: manager
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        control-plane: controller-manager-mimirrules
+        {{- include "chart.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "chart.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        {{- if .Values.authProxy.enabled }}
+        - name: kube-rbac-proxy
+          args:
+            - --secure-listen-address=0.0.0.0:8443
+            - --upstream=http://127.0.0.1:8080/
+            - --logtostderr=true
+            - --v=0
+          securityContext:
+            {{- toYaml .Values.authProxy.securityContext | nindent 12 }}
+          image: "{{ .Values.authProxy.image.repository }}:{{ .Values.authProxy.image.tag }}"
+          imagePullPolicy: {{ .Values.authProxy.image.pullPolicy }}
+          ports:
+            - containerPort: 8443
+              name: http-metrics
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.authProxy.resources | nindent 12 }}
+        {{- end }}
+        - name: manager
+          command:
+          - /manager
+          args:
+          - --health-probe-bind-address=:8081
+          {{- if .Values.authProxy.enabled }}
+          - --metrics-bind-address=127.0.0.1:8080
+          {{- else }}
+          - --metrics-bind-address=:8080
+          {{- end }}
+          - --leader-elect
+          - --zap-devel={{ .Values.logger.develMode | default "true" }}
+          - --zap-log-level={{ .Values.logger.level | default "info" }}
+          - --zap-time-encoding={{ .Values.logger.timeEncoding | default "iso8601" }}
+          - --mimir-api={{ .Values.config.mimirAPI }}
+          {{- if .Values.config.CRLabelSelector }}
+          - --cr-label-annotation={{ .Values.config.CRLabelSelector }}
+          {{- end }}
+          {{- if .Values.config.CRLabelSelector }}
+          - --cr-tenant-annotation={{ .Values.config.tenantAnnotation }}
+          {{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- if not .Values.authProxy.enabled }}
+          ports:
+            - name: http-metrics
+              containerPort: 8080
+              protocol: TCP
+          {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8081
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

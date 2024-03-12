@@ -1,0 +1,80 @@
+{{- if .Values.controllerClusterRole.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "chart.controllerClusterRoleName" . }}
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+  {{- with .Values.controllerClusterRole.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+rules:
+- apiGroups:
+  - mimirrules.telemetry.springernature.com
+  resources:
+  - mimirrules
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - mimirrules.telemetry.springernature.com
+  resources:
+  - mimirrules/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - mimirrules.telemetry.springernature.com
+  resources:
+  - mimirrules/status
+  verbs:
+  - get
+  - patch
+  - update
+---
+{{- end }}
+
+# permissions to do leader election.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: "{{ include "chart.fullname" . }}-leader-election"
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch

@@ -1,0 +1,148 @@
+# Default values for chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+replicaCount: 1
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+controllerClusterRole:
+  # Specifies whether the controller clusterrole should be created.
+  create: true
+  # Annotations to add to the clusterrole
+  annotations: {}
+  # ClusterRole name for the controller
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+crdClusterRoles:
+  # Specifies whether the clusterroles should be created.
+  # It creates two clusterroles:
+  # - viewer: permissions for end users to view mimirrules.
+  # - editor: permissions for end users to edit mimirrules.
+  create: false
+  # Annotations to add to the clusterroles
+  annotations: {}
+  # The basename of the clusterroles
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+image:
+  repository: ghcr.io/springernature/o11y-rules-telemetry-operator/mimirrules
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+resources: 
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - "ALL"
+
+podAnnotations: {}
+podLabels: {}
+podSecurityContext:
+  runAsNonRoot: true
+
+# Controller logging settings
+logger:
+  # Development Mode defaults(encoder=consoleEncoder,logLevel=Debug,stackTraceLevel=Warn).
+  # Production Mode defaults(encoder=jsonEncoder,logLevel=Info,stackTraceLevel=Error)
+  develMode: true
+  #  Can be one of 'debug', 'info', 'error'
+  level: info
+  # Time encoding (one of 'epoch', 'millis', 'nano', 'iso8601', 'rfc3339' or 'rfc3339nano')
+  timeEncoding: "iso8601"
+
+# Controller configuration
+config:
+  mimirAPI: "http://mimir.api.url/"
+  tenantAnnotation: "telemetry.springernature.com/o11y-tenant"
+  # Set a selector to filter specific CR for this controller
+  # CRLabelSelector:
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# Auth Proxy.
+# If enabled Service will be pointing to the proxy instead of pointing to controller
+# Additional clusterroles will be created to allow querying the metrics endpoint
+authProxy:
+  enabled: false
+  image:
+    repository: gcr.io/kubebuilder/kube-rbac-proxy
+    pullPolicy: IfNotPresent
+    tag: "v0.15.0"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 5m
+      memory: 64Mi
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - "ALL"
+
+authProxyClusterRole:
+  # Specifies whether the controller clusterrole should be created.
+  create: true
+  # Annotations to add to the clusterrole
+  annotations: {}
+  # ClusterRole name for the controller
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+service:
+  type: ClusterIP
+  port: 80
+
+serviceMonitor:
+  enabled: false
+  honorLabels: true
+  honorTimestamps: true
+  jobLabel: "app.kubernetes.io/instance"
+# additionalLabels: []
+# relabelings: []
+# metricRelabelings: []
+
+# Additional volumes on the output Deployment definition.
+volumes: []
+# - name: foo
+#   secret:
+#     secretName: mysecret
+#     optional: false
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts: []
+# - name: foo
+#   mountPath: "/etc/foo"
+#   readOnly: true
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

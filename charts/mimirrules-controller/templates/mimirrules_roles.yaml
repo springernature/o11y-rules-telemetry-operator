@@ -1,0 +1,57 @@
+{{- if .Values.crdClusterRoles.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "chart.crdClusterRolesBaseName" . }}-editor
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+  {{- with .Values.crdClusterRoles.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+rules:
+- apiGroups:
+  - mimirrules.telemetry.springernature.com
+  resources:
+  - mimirrules
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - mimirrules.telemetry.springernature.com
+  resources:
+  - mimirrules/status
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "chart.crdClusterRolesBaseName" . }}-viewer
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+  {{- with .Values.crdClusterRoles.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+rules:
+- apiGroups:
+  - mimirrules.telemetry.springernature.com
+  resources:
+  - mimirrules
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - mimirrules.telemetry.springernature.com
+  resources:
+  - mimirrules/status
+  verbs:
+  - get
+{{- end }}
