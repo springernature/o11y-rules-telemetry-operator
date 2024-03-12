@@ -54,7 +54,9 @@ jobs:
       with:
           context: ${{ env.DOCKER_BUILD_DIR }}
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}, ${{ steps.chart.outputs.app-version }}
+          tags: |
+            ${{ steps.meta.outputs.tags }}
+            ${{ env.DOCKER_REGISTRY }}:${{ steps.chart.outputs.app-version }}
           labels: ${{ steps.meta.outputs.labels }}
 
   release-chart:
