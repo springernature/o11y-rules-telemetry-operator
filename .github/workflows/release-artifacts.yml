@@ -9,6 +9,7 @@ on:
 
 env:
     DOCKER_IMAGE_NAME: mimirrules
+    DOCKER_REGISTRY: ghcr.io/springernature/o11y-rules-telemetry-operator
     DOCKER_BUILD_DIR: '.'
 
 permissions: {}
@@ -36,6 +37,11 @@ jobs:
               type=ref,event=branch
               type=sha
 
+    - name: Get appversion from chart
+      id: chart
+      run: |
+        awk  -F':' '/^appVersion[[:blank:]]*:/{ gsub("\"","",$2); gsub(" ", "", $2); print "app-version="$2 }' charts/mimirrules-controller/Chart.yaml  >> $GITHUB_OUTPUT
+
     - name: Log in to the GitHub Container registry
       uses: docker/login-action@v3
       with:
@@ -48,7 +54,7 @@ jobs:
       with:
           context: ${{ env.DOCKER_BUILD_DIR }}
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }}, ${{ steps.chart.outputs.app-version }}
           labels: ${{ steps.meta.outputs.labels }}
 
   release-chart:
