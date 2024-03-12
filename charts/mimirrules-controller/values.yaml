@@ -38,7 +38,7 @@ crdClusterRoles:
   name: ""
 
 image:
-  repository: ghcr.io/springernature/o11y-rules-telemetry-operator/mimirrules
+  repository: ghcr.io/springernature/o11y-rules-telemetry-operator/mimirrules-controller
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""

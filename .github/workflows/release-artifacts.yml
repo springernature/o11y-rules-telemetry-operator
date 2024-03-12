@@ -8,7 +8,8 @@ on:
         - "main"
 
 env:
-    DOCKER_IMAGE_NAME: mimirrules
+    # Default image for the Chart
+    DOCKER_IMAGE_NAME: mimirrules-controller
     DOCKER_REGISTRY: ghcr.io/springernature/o11y-rules-telemetry-operator
     DOCKER_BUILD_DIR: '.'
 

@@ -3,7 +3,7 @@
 K8S controller to manage Mimir Alerting and Recording rules with dynamic tenants, based on namespace name or annotations.
 Visit https://springernature.github.io/o11y-rules-telemetry-operator to see how to install with Helm.
 
-This repository uses GitHub pages with [chart-releaser](https://github.com/helm/chart-releaser) in a workflow with [chart-releaser-action](https://github.com/helm/chart-releaser-action) to automatically create an manage a Helm repository.
+**This repository uses GitHub pages with [chart-releaser](https://github.com/helm/chart-releaser) in a workflow with [chart-releaser-action](https://github.com/helm/chart-releaser-action) to automatically create an manage a Helm repository. See below for more info**
 
 ## Description
 
@@ -37,7 +37,7 @@ Code:
 - `internal/controller/mimirrules_controller.go`: Controller logic
 - `internal/controller/mimirrules.go`: Mimir Rule API HTTP client
 
-## Cheat sheet:
+## Cheat sheet
 
 ### Prerequisites
 
@@ -60,21 +60,25 @@ make install
 make
 
 # Define the image version
-TAG=v10
+TAG=test1
 
 # Creates a docker images with the binary and pushes it to the registry
-make docker-build docker-push IMG=eu.gcr.io/halfpipe-io/ee-o11y/o11y-rules-telemetry-operator:$TAG
+make docker-build docker-push IMG=ghcr.io/springernature/o11y-rules-telemetry-operator/mimirrules-controller:$TAG
 
 # Deploys the kustomization to the K8s cluster (all files created in config)
-make deploy IMG=eu.gcr.io/halfpipe-io/ee-o11y/o11y-rules-telemetry-operator:$TAG
+make deploy IMG=ghcr.io/springernature/o11y-rules-telemetry-operator/mimirrules-controller:$TAG
 ```
+
+## Building a new Chart and Docker image version
+
+This repository uses GitHub pages with [chart-releaser](https://github.com/helm/chart-releaser) in a workflow with [chart-releaser-action](https://github.com/helm/chart-releaser-action) to automatically create an manage a Helm repository. In order to create a new version, update the versions in `charts/mimirrules-controller/Chart.yam`, increase both versions at the same time, each Helm Chart version will map each own image version (no need to be the same). After pushing the commit, the GH Actions workflow will generate the new packages in the GH registry.
 
 
 ### To Deploy on the cluster
 **Build and push your image to the location specified by `IMG`:**
 
 ```sh
-make docker-build docker-push IMG=eu.gcr.io/halfpipe-io/ee-o11y/o11y-rules-telemetry-operator:v1
+make docker-build docker-push IMG=ghcr.io/springernature/o11y-rules-telemetry-operator/mimirrules-controller:0.0.1
 ```
 
 **NOTE:** This image ought to be published in the personal registry you specified. 
@@ -90,7 +94,7 @@ make install
 **Deploy the Manager to the cluster with the image specified by `IMG`:**
 
 ```sh
-make deploy IMG=eu.gcr.io/halfpipe-io/ee-o11y/o11y-rules-telemetry-operator:v1
+make deploy IMG=ghcr.io/springernature/o11y-rules-telemetry-operator/mimirrules-controller:0.0.1
 ```
 
 > **NOTE**: If you encounter RBAC errors, you may need to grant yourself cluster-admin 
@@ -131,7 +135,7 @@ Following are the steps to build the installer and distribute this project to us
 1. Build the installer for the image built and published in the registry:
 
 ```sh
-make build-installer IMG=eu.gcr.io/halfpipe-io/ee-o11y/o11y-rules-telemetry-operator:v1
+make build-installer IMG=ghcr.io/springernature/o11y-rules-telemetry-operator/mimirrules-controller:0.0.1
 ```
 
 NOTE: The makefile target mentioned above generates an 'install.yaml'
