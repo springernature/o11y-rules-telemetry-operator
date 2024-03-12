@@ -4,7 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/name: this-is-me
   annotations:
-    "change.telemetry.springernature.com/o11y-tenant": "jose"
+    "telemetry.springernature.com/o11y-tenant": "jose"
   name: mimirrules-sample
 spec:
   groups:
