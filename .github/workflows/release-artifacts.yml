@@ -15,6 +15,8 @@ permissions: {}
 
 jobs:
   build-image:
+    permissions:
+      packages: write # needed for ghcr access
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -52,7 +54,7 @@ jobs:
   release-chart:
     permissions:
       contents: write # to push chart release and create a release (helm/chart-releaser-action)
-      packages: write # needed for ghcr access
+      packages: write
     needs:
       - build-image
     runs-on: ubuntu-latest
