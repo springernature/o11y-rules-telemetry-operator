@@ -96,5 +96,5 @@ jobs:
           ls -l .cr-release-packages/*
           for pkg in .cr-release-packages/*; do
             [ -z "${pkg:-}" ] && break
-            helm push --debug "${pkg}" "oci://ghcr.io/${GITHUB_REPOSITORY_OWNER}/charts" || echo "::warning:: helm push failed!" >> $GITHUB_OUTPUT
+            helm push --debug "${pkg}" "oci://ghcr.io/${GITHUB_REPOSITORY_OWNER}/charts" || echo "::warning title=Helm push::Helm push artifact to GH Registry has failed!"
           done
