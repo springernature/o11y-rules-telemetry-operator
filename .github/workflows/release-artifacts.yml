@@ -28,7 +28,7 @@ jobs:
       run: |
           # This step is not needed per se, but runs all the tests
           # and generate the manifests
-          make && cp -v config/crd/bases/* charts/mimirrules-controller/crds/
+          make
 
   build-image:
     permissions:
@@ -94,6 +94,13 @@ jobs:
         run: |
             git config user.name "$GITHUB_ACTOR"
             git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Check if CRDs match
+        run: |
+          # This step is not needed per se, but runs all the tests
+          # and generate the manifests
+          # make manifests
+          diff -r  config/crd/bases  charts/mimirrules-controller/crds
 
       - name: Set up Helm
         uses: azure/setup-helm@v4
