@@ -90,4 +90,4 @@ This will install CRD `MimirRules`. Take this into account for CRD updates or wh
 | serviceMonitor.tlsConfig | string | `nil` | ServiceMonitor will use these tlsConfig settings to make the health check requests |
 
 
-Auth proxy settings not covered here.
+TODO: Auth proxy settings.
