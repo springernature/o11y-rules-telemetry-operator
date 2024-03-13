@@ -90,10 +90,12 @@ jobs:
             CR_SKIP_EXISTING: "true"
 
 
-    #   - name: Push charts to GHCR
-    #     run: |
-    #       shopt -s nullglob
-    #       for pkg in .cr-release-packages/*; do
-    #         [ -z "${pkg:-}" ] && break
-    #         helm push "${pkg}" "oci://ghcr.io/${GITHUB_REPOSITORY_OWNER}/charts" &&  echo "::warning:: helm push failed!" >> $GITHUB_OUTPUT
-    #       done
+      - name: Push charts to GHCR
+        run: |
+          shopt -s nullglob
+          echo ${GITHUB_REPOSITORY_OWNER}
+          ls -l .cr-release-packages/*
+          for pkg in .cr-release-packages/*; do
+            [ -z "${pkg:-}" ] && break
+            helm push "${pkg}" "oci://ghcr.io/${GITHUB_REPOSITORY_OWNER}/charts" &&  echo "::warning:: helm push failed!" >> $GITHUB_OUTPUT
+          done
