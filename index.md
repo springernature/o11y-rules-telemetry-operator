@@ -1,10 +1,8 @@
 # Helm repository for Mimir Rules Kubernetes controller
 
-K8S controller to manage Mimir Alerting and Recording rules with dynamic tenants, based on namespace name or annotations.
+K8S controller to manage Mimir Alerting and Recording rules with dynamic tenants, based on namespace name or annotations. The controller uses an [CRD `MimirRules`](https://github.com/springernature/o11y-rules-telemetry-operator/blob/main/config/crd/bases/mimirrules.telemetry.springernature.com_mimirrules.yaml) which matches the [`PrometheusRule` specs](https://prometheus-operator.dev/docs/operator/api/#monitoring.coreos.com/v1.PrometheusRule) defined by the [Prometheus Operator](https://prometheus-operator.dev/).
 
-# Helm repository for Mimir Rules Kubernetes controller
-
-K8S controller to manage Mimir Alerting and Recording rules with dynamic tenants, based on namespace name or annotations.
+The current MimirRules specs are defined in the [repository, in `/config/crd/bases/` directory](https://github.com/springernature/o11y-rules-telemetry-operator/blob/main/config/crd/bases/mimirrules.telemetry.springernature.com_mimirrules.yaml).
 
 > Warning!
 >

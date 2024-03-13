@@ -1,7 +1,7 @@
 title: Mimir Rules K8S Controller
-description: K8S controller to manage Mimir Alerting and Recording rules with dynamic tenants, based on namespace name or annotations.
-show_downloads: true
+description: K8S controller to manage Grafana Mimir Alerting and Recording rules.
+show_downloads: false
 google_analytics:
-remote_theme: pages-themes/hacker@v0.2.0
+remote_theme: pages-themes/hacker@v0.2.1
 plugins:
 - jekyll-remote-theme
