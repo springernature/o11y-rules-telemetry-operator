@@ -1,9 +1,11 @@
 # o11y-rules-telemetry-operator
 
 K8S controller to manage Mimir Alerting and Recording rules with dynamic tenants, based on namespace name or annotations.
-Visit https://springernature.github.io/o11y-rules-telemetry-operator to see how to install with Helm.
 
-**This repository uses GitHub pages with [chart-releaser](https://github.com/helm/chart-releaser) in a workflow with [chart-releaser-action](https://github.com/helm/chart-releaser-action) to automatically create an manage a Helm repository. See below for more info**
+## Production installation
+
+1. Follow the instructions at https://springernature.github.io/o11y-rules-telemetry-operator
+2. See all available settings in the Chart: https://github.com/springernature/o11y-rules-telemetry-operator/blob/main/charts/Readme.md
 
 ## Description
 
@@ -14,7 +16,7 @@ apiVersion: mimirrules.telemetry.springernature.com/v1beta1
 kind: MimirRules
 metadata:
   annotations:
-    "change.telemetry.springernature.com/o11y-tenant": "jose"
+    "telemetry.springernature.com/o11y-tenant": "jose"
   name: mimirrules-sample
 spec:
   groups:
@@ -25,11 +27,12 @@ spec:
       labels:
         severity: warning
 ```
-The operator applies the rules to Mimir (Ruler) Api using the tenant defined in the annotation, or 
-It updates the status according to the results and emits events.
+The operator applies the rules to Mimir (Ruler) Api using the tenant defined in the annotation or namespace and it updates the status according to the results and emits events.
 
 
-## Getting Started developing
+# Getting Started developing
+
+**This repository uses GitHub pages with [chart-releaser](https://github.com/helm/chart-releaser) in a workflow with [chart-releaser-action](https://github.com/helm/chart-releaser-action) to automatically create an manage a Helm repository. See below for more info**
 
 Code:
 - `cmd/main.go`: Arguments and environment variables
@@ -37,7 +40,11 @@ Code:
 - `internal/controller/mimirrules_controller.go`: Controller logic
 - `internal/controller/mimirrules.go`: Mimir Rule API HTTP client
 
+More information can be found via the [Kubebuilder Documentation](https://book.kubebuilder.io/introduction.html)
+
 ## Cheat sheet
+
+Run `make help` for more information on all potential `make` targets
 
 ### Prerequisites
 
@@ -128,6 +135,12 @@ make uninstall
 make undeploy
 ```
 
+**Generate K8S manifests:**
+
+```sh
+make build-installer
+```
+
 ## Project Distribution
 
 Following are the steps to build the installer and distribute this project to users.
@@ -151,14 +164,9 @@ Users can just run kubectl apply -f <URL for YAML BUNDLE> to install the project
 kubectl apply -f https://raw.githubusercontent.com/<org>/o11y-rules-telemetry-operator/<v1 or branch>/dist/install.yaml
 ```
 
-## Contributing
-Run `make help` for more information on all potential `make` targets
+# License
 
-More information can be found via the [Kubebuilder Documentation](https://book.kubebuilder.io/introduction.html)
-
-## License
-
-Copyright 2024.
+Copyright Springer Nature 2024.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

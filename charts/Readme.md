@@ -8,10 +8,10 @@ Github repository: https://github.com/springernature/o11y-rules-telemetry-operat
 To install the app chart in the Kubernetes cluster.
 
 ```console
-helm upgrade --install mimirrules o11y-rules-telemetry-operator/mimirrules
+helm upgrade --install mimirrules-controller o11y-rules-telemetry-operator/mimirrules-controller --set config.mimirAPI=http://your.mimir.api
 ```
 
-This will install CRD `MimirRules`. Take this into account for CRD updates or when deleting the controller, those operations will require manual steps with `kubectl delete/apply`.
+This command install CRD `MimirRules`. Take this into account for CRD updates or when deleting the controller, those operations will require manual steps with `kubectl delete/apply`.
 
 
 ### Values
