@@ -1,0 +1,100 @@
+name: Release Docker images and Helm Chart
+# see https://github.com/helm/chart-releaser-action
+
+on:
+    workflow_dispatch: { }
+    push:
+      branches:
+        - "main"
+
+env:
+    # Default image for the Chart
+    DOCKER_IMAGE_NAME: mimirrules-controller
+    DOCKER_REGISTRY: ghcr.io/springernature/o11y-rules-telemetry-operator
+    DOCKER_BUILD_DIR: '.'
+
+permissions: {}
+
+jobs:
+  build-image:
+    permissions:
+      packages: write # needed for ghcr access
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Get metadata for Docker image
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+          images: |
+              ghcr.io/${{ github.repository }}/${{ env.DOCKER_IMAGE_NAME }}
+          tags: |
+              type=raw,value=latest,enable={{is_default_branch}}
+              type=ref,event=tag
+              type=ref,event=branch
+              type=sha
+
+    - name: Get appversion from chart
+      id: chart
+      run: |
+        awk  -F':' '/^appVersion[[:blank:]]*:/{ gsub("\"","",$2); gsub(" ", "", $2); print "app-version="$2 }' charts/mimirrules-controller/Chart.yaml  >> $GITHUB_OUTPUT
+
+    - name: Log in to the GitHub Container registry
+      uses: docker/login-action@v3
+      with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build and if not a PR push to Github Packages
+      uses: docker/build-push-action@v5
+      with:
+          context: ${{ env.DOCKER_BUILD_DIR }}
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: |
+            ${{ steps.meta.outputs.tags }}
+            ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_IMAGE_NAME }}:${{ steps.chart.outputs.app-version }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  release-chart:
+    permissions:
+      contents: write # to push chart release and create a release (helm/chart-releaser-action)
+      packages: write
+    needs:
+      - build-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.5.0
+        with:
+            charts_dir: charts
+        env:
+            CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+            CR_SKIP_EXISTING: "true"
+
+      - name: Push charts to GHCR
+        run: |
+          shopt -s nullglob
+          echo ${GITHUB_REPOSITORY_OWNER}
+          ls -l .cr-release-packages/*
+          for pkg in .cr-release-packages/*; do
+            [ -z "${pkg:-}" ] && break
+            helm push --debug "${pkg}" "oci://ghcr.io/${GITHUB_REPOSITORY_OWNER}/charts" || echo "::warning:: helm push failed!" >> $GITHUB_OUTPUT
+          done
