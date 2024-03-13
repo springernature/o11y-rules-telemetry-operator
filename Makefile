@@ -1,6 +1,6 @@
 
 # Image URL to use all building/pushing image targets
-IMG ?= eu.gcr.io/halfpipe-io/ee-o11y/mimir-rules-operator:latest
+IMG ?= ghcr.io/springernature/o11y-rules-telemetry-operator/mimirrules-controller:latest
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
 ENVTEST_K8S_VERSION = 1.29.0
 

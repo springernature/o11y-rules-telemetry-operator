@@ -78,7 +78,7 @@ jobs:
             git config user.name "$GITHUB_ACTOR"
             git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-      - name: Run make
+      - name: Run make and generate definitions
         run: |
             # This step is not needed per se, but runs all the tests
             # and generate the manifests

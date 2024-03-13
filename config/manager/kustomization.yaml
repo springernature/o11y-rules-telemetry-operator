@@ -5,4 +5,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: ghcr.io/springernature/o11y-rules-telemetry-operator/mimirrules-controller
-  newTag: 0.1.0
+  newTag: latest
