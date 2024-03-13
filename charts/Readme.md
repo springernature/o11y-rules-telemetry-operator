@@ -1,6 +1,7 @@
 # Mimir Rules Kubernetes controller
 
 K8S controller to manage Mimir Alerting and Recording rules with dynamic tenants, based on namespace name or annotations.
+Github repository: https://github.com/springernature/o11y-rules-telemetry-operator
 
 ## Using helm chart
 
