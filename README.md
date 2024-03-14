@@ -7,6 +7,8 @@ K8S controller to manage Mimir Alerting and Recording rules with dynamic tenants
 1. Follow the instructions at https://springernature.github.io/o11y-rules-telemetry-operator
 2. See all available settings in the Chart: https://github.com/springernature/o11y-rules-telemetry-operator/blob/main/charts/Readme.md
 
+Alternatively, the controller and CRDs can be installed directly with `kubectl apply -f dist/install.yaml`
+
 ## Description
 
 Given a MimirRules CR:
@@ -74,6 +76,9 @@ make docker-build docker-push IMG=ghcr.io/springernature/o11y-rules-telemetry-op
 
 # Deploys the kustomization to the K8s cluster (all files created in config)
 make deploy IMG=ghcr.io/springernature/o11y-rules-telemetry-operator/mimirrules-controller:$TAG
+
+# Generate a consolidated YAML with CRDs and deployment.
+make build-installer
 ```
 
 ## Building a new Chart and Docker image version
