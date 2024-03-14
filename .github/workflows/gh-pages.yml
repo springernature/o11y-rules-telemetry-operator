@@ -4,10 +4,10 @@ name: Deploy static content to Pages
 on:
   push:
     branches:
-      - "gh-pages"
-  release:
-    types:
-      - published
+      - 'gh-pages'
+    paths:
+      - '**/index.yaml'
+      
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
