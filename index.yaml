@@ -2,6 +2,22 @@ apiVersion: v1
 entries:
   mimirrules-controller:
   - apiVersion: v2
+    appVersion: 1.0.2
+    created: "2024-03-14T10:43:10.22502377Z"
+    description: A Helm chart to deploy Mimir Rules CR  controller
+    digest: 5124f6cccbb842a75460e474823419b35bb38c1803f4077e2589775f19e5a80d
+    home: https://github.com/springernature/o11y-rules-telemetry-operator
+    maintainers:
+    - email: observability-engineering@springernature.com
+      name: Engineering Enablement O11y
+    name: mimirrules-controller
+    sources:
+    - https://github.com/springernature/o11y-rules-telemetry-operator
+    type: application
+    urls:
+    - https://github.com/springernature/o11y-rules-telemetry-operator/releases/download/mimirrules-controller-1.0.2/mimirrules-controller-1.0.2.tgz
+    version: 1.0.2
+  - apiVersion: v2
     appVersion: 1.0.1
     created: "2024-03-14T10:35:26.447394347Z"
     description: A Helm chart to deploy Mimir Rules CR  controller
@@ -33,4 +49,4 @@ entries:
     urls:
     - https://github.com/springernature/o11y-rules-telemetry-operator/releases/download/mimirrules-controller-1.0.0/mimirrules-controller-1.0.0.tgz
     version: 1.0.0
-generated: "2024-03-14T10:35:26.44742287Z"
+generated: "2024-03-14T10:43:10.225039409Z"
