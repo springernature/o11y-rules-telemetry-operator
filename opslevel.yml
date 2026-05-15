@@ -1,0 +1,14 @@
+version: 1
+component:
+  name: o11y-rules-telemetry-operator
+  owner: engineering-enablement
+  description: "K8S controller to manage Mimir Alerting and Recording rules with dynamic tenants"
+  type: application_module
+  lifecycle: core
+  tier: Internal-Only
+  language: go
+  system: APPL-437
+  properties:
+    pipelines:
+      - workflow_89366398  # .github/workflows/release-artifacts.yml
+      - workflow_89371169  # .github/workflows/gh-pages.yml
