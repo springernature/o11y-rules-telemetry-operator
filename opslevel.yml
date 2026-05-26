@@ -1,7 +1,7 @@
 version: 1
 component:
   name: o11y-rules-telemetry-operator
-  owner: engineering-enablement
+  owner: ee-observe
   description: "K8S controller to manage Mimir Alerting and Recording rules with dynamic tenants"
   type: application_module
   lifecycle: core
